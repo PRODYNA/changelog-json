@@ -1,0 +1,12 @@
+name: 'ChangeLog JSON'
+description: 'GitHub Action that uses the GitHub API an generates a JSON file with the changelog'
+author: darko.krizic@prodyna.com
+inputs:
+  github-token:
+    description: 'The GitHub Token to use for authentication'
+    required: true
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/prodyna/changelog-json:v1.9'
+  env:
+    GITHUB_TOKEN: ${{ inputs.github-token }}
