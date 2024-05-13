@@ -16,7 +16,11 @@ func main() {
 
 	slog.Debug("config loaded")
 
-	generator, err := changelog.New(c.GithubToken)
+	generator, err := changelog.New(changelog.Config{
+		GitHubToken:  c.GithubToken,
+		Repositories: c.Repositories,
+		Organization: c.Organization,
+	})
 	if err != nil {
 		slog.Error("unable to create changelog generator", "error", err)
 		os.Exit(1)

@@ -10,21 +10,29 @@ import (
 )
 
 const (
-	keyVerbose                = "verbose"
-	keyVerboseEnvironment     = "VERBOSE"
-	keyGithubToken            = "github-token"
-	keyGithubTokenEnvironment = "GITHUB_TOKEN"
+	keyVerbose                 = "verbose"
+	keyVerboseEnvironment      = "VERBOSE"
+	keyGithubToken             = "github-token"
+	keyGithubTokenEnvironment  = "GITHUB_TOKEN"
+	keyRepositories            = "repositories"
+	keyRepositoriesEnvironment = "REPOSITORIES"
+	keyOrganization            = "organization"
+	keyOrganizationEnvironment = "ORGANIZATION"
 )
 
 type Config struct {
-	Verbose     *int
-	GithubToken string
+	Verbose      *int
+	GithubToken  string
+	Repositories string
+	Organization string
 }
 
 func New() (*Config, error) {
 	c := Config{}
 	verbose := flag.Int(keyVerbose, lookupEnvOrInt(keyVerboseEnvironment, 0), "Verbosity level, 0=info, 1=debug. Overrides the environment variable VERBOSE.")
-	flag.StringVar(&c.GithubToken, keyGithubToken, lookupEnvOrString("GITHUB_TOKEN", ""), "The GitHub Token to use for authentication.")
+	flag.StringVar(&c.GithubToken, keyGithubToken, lookupEnvOrString(keyGithubTokenEnvironment, ""), "The GitHub Token to use for authentication.")
+	flag.StringVar(&c.Repositories, keyRepositories, lookupEnvOrString(keyRepositoriesEnvironment, ""), "The repositories to generate changelog for.")
+	flag.StringVar(&c.Organization, keyOrganization, lookupEnvOrString(keyOrganizationEnvironment, ""), "The organization to generate changelog for.")
 	flag.Parse()
 
 	level := slog.LevelError
@@ -44,6 +52,14 @@ func New() (*Config, error) {
 
 	if c.GithubToken == "" {
 		return nil, fmt.Errorf("missing required environment variable: %s", keyGithubToken)
+	}
+
+	if c.Repositories == "" {
+		return nil, fmt.Errorf("missing required environment variable: %s", keyRepositories)
+	}
+
+	if c.Organization == "" {
+		return nil, fmt.Errorf("missing required environment variable: %s", keyOrganization)
 	}
 
 	return &c, nil

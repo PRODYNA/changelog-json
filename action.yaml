@@ -7,6 +7,6 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/prodyna/changelog-json:v1.9'
+  image: 'docker://ghcr.io/prodyna/changelog-json:v0.5'
   env:
     GITHUB_TOKEN: ${{ inputs.github-token }}

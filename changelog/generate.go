@@ -1,12 +1,18 @@
 package changelog
 
-type ChangelogGenerator struct {
-	githubToken string
+type Config struct {
+	GitHubToken  string
+	Repositories string
+	Organization string
 }
 
-func New(githubToken string) (*ChangelogGenerator, error) {
+type ChangelogGenerator struct {
+	config *Config
+}
+
+func New(config Config) (*ChangelogGenerator, error) {
 	return &ChangelogGenerator{
-		githubToken: githubToken,
+		config: &config,
 	}, nil
 }
 
