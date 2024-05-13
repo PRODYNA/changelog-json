@@ -5,8 +5,21 @@ inputs:
   github-token:
     description: 'The GitHub Token to use for authentication'
     required: true
+  repositories:
+    description: 'The repositories to query for the changelog'
+    required: true
+  organization:
+    description: 'The organization to query for the repositories'
+    required: true
+  output-file:
+    description: 'The output file to write the changelog to'
+    required: true
+    default: 'CHANGELOG.json'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/prodyna/changelog-json:v0.5'
+  image: 'docker://ghcr.io/prodyna/changelog-json:v0.9'
   env:
     GITHUB_TOKEN: ${{ inputs.github-token }}
+    REPOSITORIES: ${{ inputs.repositories }}
+    ORGANIZATION: ${{ inputs.organization }}
+    OUTPUT_FILE: ${{ inputs.output-file }}
