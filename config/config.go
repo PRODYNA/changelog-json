@@ -18,6 +18,8 @@ const (
 	keyRepositoriesEnvironment = "REPOSITORIES"
 	keyOrganization            = "organization"
 	keyOrganizationEnvironment = "ORGANIZATION"
+	keyOutputFile              = "output-file"
+	keyOutputFileEnvironment   = "OUTPUT_FILE"
 )
 
 type Config struct {
@@ -25,6 +27,7 @@ type Config struct {
 	GithubToken  string
 	Repositories string
 	Organization string
+	OutputFile   string
 }
 
 func New() (*Config, error) {
@@ -33,6 +36,7 @@ func New() (*Config, error) {
 	flag.StringVar(&c.GithubToken, keyGithubToken, lookupEnvOrString(keyGithubTokenEnvironment, ""), "The GitHub Token to use for authentication.")
 	flag.StringVar(&c.Repositories, keyRepositories, lookupEnvOrString(keyRepositoriesEnvironment, ""), "The repositories to generate changelog for.")
 	flag.StringVar(&c.Organization, keyOrganization, lookupEnvOrString(keyOrganizationEnvironment, ""), "The organization to generate changelog for.")
+	flag.StringVar(&c.OutputFile, keyOutputFile, lookupEnvOrString(keyOutputFileEnvironment, ""), "The output file to write the changelog to.")
 	flag.Parse()
 
 	level := slog.LevelError
@@ -60,6 +64,10 @@ func New() (*Config, error) {
 
 	if c.Organization == "" {
 		return nil, fmt.Errorf("missing required environment variable: %s", keyOrganization)
+	}
+
+	if c.OutputFile == "" {
+		return nil, fmt.Errorf("missing required environment variable: %s", keyOutputFile)
 	}
 
 	return &c, nil

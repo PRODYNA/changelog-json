@@ -90,6 +90,7 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 				Name:        release.Name,
 				Component:   repository,
 				Description: release.Description,
+				Date:        release.CreatedAt,
 			}
 			slog.Info("Adding entry", "tag", entry.Tag, "name", entry.Name, "component", entry.Component, "description.len", len(entry.Description))
 			changelog.AddEntry(entry)

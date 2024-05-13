@@ -41,9 +41,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	_, err = os.Stdout.Write(output)
+	// write changelog to file
+	err = os.WriteFile(c.OutputFile, output, 0644)
 	if err != nil {
-		slog.Error("unable to write changelog", "error", err)
+		slog.Error("unable to write changelog to file", "error", err)
 		os.Exit(1)
 	}
 }

@@ -103,6 +103,7 @@ func (c *Changelog) AddEntry(entry Entry) error {
 				Name:        entry.Component,
 				Title:       entry.Name,
 				Description: entry.Description,
+				Date:        entry.Date,
 			})
 			break
 		}
