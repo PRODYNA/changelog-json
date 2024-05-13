@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"github.com/prodyna/changelog-json/changelog"
 	"github.com/prodyna/changelog-json/config"
 	"log/slog"
@@ -8,6 +9,8 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	c, err := config.New()
 	if err != nil {
 		slog.Error("unable to load config", "error", err)
@@ -26,13 +29,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	changelog, err := generator.Generate()
+	cl, err := generator.Generate(ctx)
 	if err != nil {
 		slog.Error("unable to generate changelog", "error", err)
 		os.Exit(1)
 	}
 
-	output, err := changelog.RenderJSON()
+	output, err := cl.RenderJSON()
 	if err != nil {
 		slog.Error("unable to render changelog", "error", err)
 		os.Exit(1)
