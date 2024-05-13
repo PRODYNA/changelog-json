@@ -2,6 +2,7 @@ package changelog
 
 import (
 	"context"
+	"github.com/prodyna/changelog-json/changelog/output"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"log/slog"
@@ -12,6 +13,12 @@ type Config struct {
 	GitHubToken  string
 	Repositories string
 	Organization string
+}
+
+type Tag struct {
+	Name        string
+	Description string
+	Repository  string
 }
 
 type ChangelogGenerator struct {
@@ -26,8 +33,9 @@ func New(config Config) (*ChangelogGenerator, error) {
 	return c, nil
 }
 
-func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *Changelog, err error) {
+func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.Changelog, err error) {
 	slog.Info("Generating changelog", "repositories", clg.config.Repositories, "organization", clg.config.Organization)
+	changelog = &output.Changelog{}
 	src := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: clg.config.GitHubToken},
 	)
@@ -55,7 +63,7 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *Changel
 							} `graphql:"associatedPullRequests(first: 99)"`
 						}
 					}
-				} `graphql:"releases(first: 20)"`
+				} `graphql:"releases(first: 10)"`
 			} `graphql:"repository(name: $repository)"`
 		} `graphql:"organization(login: $organization)"`
 	}
@@ -74,25 +82,19 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *Changel
 		}
 
 		for _, release := range query.Organization.Repository.Releases.Nodes {
-			slog.Debug("Release", "tag", release.Tag.Name, "date", release.CreatedAt, "name", release.Name, "description", release.Description)
+			slog.Debug("Release", "tag", release.Tag.Name, "date", release.CreatedAt, "name", release.Name, "description.len", len(release.Description))
 			for _, pr := range release.Tag.AssociatedPullRequests.Nodes {
 				slog.Debug("PR", "number", pr.Number, "author", pr.Author.Login)
+				entry := output.Entry{
+					Tag:         release.Tag.Name,
+					Name:        release.Name,
+					Component:   repository,
+					Description: release.Description,
+				}
+				changelog.AddEntry(entry)
 			}
 		}
 	}
 
-	return &Changelog{
-		Releases: []Release{
-			{
-				Tag:   "1.1.0",
-				Date:  "2020-01-02",
-				Title: "Added new feature",
-			},
-			{
-				Tag:   "1.0.0",
-				Date:  "2020-01-01",
-				Title: "Initial release",
-			},
-		},
-	}, nil
+	return changelog, nil
 }

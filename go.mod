@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/shurcooL/graphql v0.0.0-20230722043721-ed46e5a46466 // indirect
 )
