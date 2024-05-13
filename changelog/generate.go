@@ -2,7 +2,6 @@ package changelog
 
 import (
 	"context"
-	"fmt"
 	"github.com/prodyna/changelog-json/changelog/output"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
@@ -37,12 +36,7 @@ func New(config Config) (*ChangelogGenerator, error) {
 func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.Changelog, err error) {
 	slog.Info("Generating changelog", "repositories", clg.config.Repositories, "organization", clg.config.Organization)
 	changelog = &output.Changelog{
-		Releases: &[]output.Release{
-			{
-				Tag:        "0.0.0",
-				Components: &[]output.Component{},
-			},
-		},
+		Releases: &[]output.Release{},
 	}
 	src := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: clg.config.GitHubToken},
@@ -97,17 +91,10 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 				Component:   repository,
 				Description: release.Description,
 			}
-			slog.Info("Adding entry", "tag", entry.Tag, "name", entry.Name, "component", entry.Component, "description", entry.Description)
+			slog.Info("Adding entry", "tag", entry.Tag, "name", entry.Name, "component", entry.Component, "description.len", len(entry.Description))
 			changelog.AddEntry(entry)
 		}
 	}
-
-	output, err := changelog.RenderJSON()
-	if err != nil {
-		slog.Error("unable to render changelog", "error", err)
-		return nil, err
-	}
-	fmt.Printf("%s", output)
 
 	return changelog, nil
 }

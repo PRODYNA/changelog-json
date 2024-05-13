@@ -9,31 +9,31 @@ import (
 func TestChangelog_AddEntry(t *testing.T) {
 	changelog := &Changelog{}
 	changelog.AddEntry(Entry{
-		Tag:         "1.0.0",
+		Tag:         "1.19.3",
 		Name:        "Initial Release",
 		Component:   "frontend",
 		Description: "Initial frontend version",
 	})
 	changelog.AddEntry(Entry{
-		Tag:         "1.0.0",
+		Tag:         "1.19.3",
 		Name:        "Initial Release",
 		Component:   "backend",
 		Description: "Initial backend version",
 	})
 	changelog.AddEntry(Entry{
-		Tag:         "1.1.0",
+		Tag:         "1.22.1",
 		Name:        "Feature 1",
 		Component:   "frontend",
 		Description: "This cool frontend feature",
 	})
 	changelog.AddEntry(Entry{
-		Tag:         "1.1.0",
+		Tag:         "1.22.1",
 		Name:        "Feature 1",
 		Component:   "backend",
 		Description: "This cool backend feature",
 	})
 	changelog.AddEntry(Entry{
-		Tag:         "1.2.0",
+		Tag:         "1.25.0",
 		Name:        "Feature 2",
 		Component:   "frontend",
 		Description: "More cool frontend feature",
