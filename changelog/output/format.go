@@ -18,12 +18,12 @@ type Entry struct {
 type Component struct {
 	Name        string `json:"name"`
 	Title       string `json:"title"`
+	Date        string `json:"date"`
 	Description string `json:"description"`
 }
 
 type Release struct {
 	Tag        string       `json:"tag"`
-	Date       string       `json:"date"`
 	Components *[]Component `json:"components"`
 }
 
@@ -42,20 +42,20 @@ func (c *Changelog) AddEntry(entry Entry) error {
 		slog.Info("Inserting first release", "entry", entry)
 		*c.Releases = append(*c.Releases, Release{
 			Tag:        entry.Tag,
-			Date:       entry.Date,
 			Components: &[]Component{}})
 	} else {
-		// check if this release exist already
-		found := false
+
+		// check if it already exists
+		exists := false
 		for _, r := range *c.Releases {
 			if r.Tag == entry.Tag {
-				found = true
 				slog.Info("Release already exists", "tag", entry.Tag)
+				exists = true
 				break
 			}
 		}
 
-		if !found {
+		if !exists {
 			// find the right place to insert the release
 			added := false
 			for i, r := range *c.Releases {
@@ -69,25 +69,27 @@ func (c *Changelog) AddEntry(entry Entry) error {
 					slog.Error("unable to parse version", "tag", entry.Tag, "error", err)
 					return err
 				}
+				if v0.Equal(v1) {
+					slog.Info("Release already exists", "tag", entry.Tag)
+					break
+				}
 				if v0.LessThan(v1) {
 					slog.Info("Inserting release", "tag", entry.Tag, "before", r.Tag)
 					// add release before the current release
 					*c.Releases = slices.Insert(*c.Releases, i, Release{
 						Tag:        entry.Tag,
-						Date:       entry.Date,
 						Components: &[]Component{},
 					})
 					added = true
+					break
 				}
-				break
 			}
 
 			if !added {
 				// add release at the end
-				slog.Info("Adding release at the end", "tag", entry.Tag, "at the end")
+				slog.Info("Adding release at the end", "tag", entry.Tag)
 				*c.Releases = append(*c.Releases, Release{
 					Tag:        entry.Tag,
-					Date:       entry.Date,
 					Components: &[]Component{},
 				})
 			}

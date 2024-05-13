@@ -15,12 +15,6 @@ func TestChangelog_AddEntry(t *testing.T) {
 		Description: "Initial frontend version",
 	})
 	changelog.AddEntry(Entry{
-		Tag:         "1.19.3",
-		Name:        "Initial Release",
-		Component:   "backend",
-		Description: "Initial backend version",
-	})
-	changelog.AddEntry(Entry{
 		Tag:         "1.22.1",
 		Name:        "Feature 1",
 		Component:   "frontend",
@@ -31,6 +25,12 @@ func TestChangelog_AddEntry(t *testing.T) {
 		Name:        "Feature 1",
 		Component:   "backend",
 		Description: "This cool backend feature",
+	})
+	changelog.AddEntry(Entry{
+		Tag:         "1.19.3",
+		Name:        "Initial Release",
+		Component:   "backend",
+		Description: "Initial backend version",
 	})
 	changelog.AddEntry(Entry{
 		Tag:         "1.25.0",
@@ -63,17 +63,17 @@ func TestChangelog_AddEntry(t *testing.T) {
 	}
 
 	// expect that the first release is 1.2.0
-	if (*changelog.Releases)[0].Tag != "1.2.0" {
+	if (*changelog.Releases)[0].Tag != "1.25.0" {
 		t.Errorf("expected first release to be 1.2.0, got %s", (*changelog.Releases)[0].Tag)
 	}
 
 	// expect that the second release is 1.1.0
-	if (*changelog.Releases)[1].Tag != "1.1.0" {
+	if (*changelog.Releases)[1].Tag != "1.22.1" {
 		t.Errorf("expected second release to be 1.1.0, got %s", (*changelog.Releases)[1].Tag)
 	}
 
 	// expect that the third release is 1.0.0
-	if (*changelog.Releases)[2].Tag != "1.0.0" {
+	if (*changelog.Releases)[2].Tag != "1.19.3" {
 		t.Errorf("expected third release to be 1.0.0, got %s", (*changelog.Releases)[2].Tag)
 	}
 }
