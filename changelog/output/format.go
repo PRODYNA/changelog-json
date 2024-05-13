@@ -18,8 +18,8 @@ type Component struct {
 }
 
 type Release struct {
-	Tag        string      `json:"tag"`
-	Components []Component `json:"components"`
+	Tag        string       `json:"tag"`
+	Components *[]Component `json:"components"`
 }
 
 type Changelog struct {
@@ -36,7 +36,7 @@ func (c *Changelog) AddEntry(entry Entry) {
 		// no releaes, create it anyways
 		*c.Releases = append(*c.Releases, Release{
 			Tag:        entry.Tag,
-			Components: []Component{}})
+			Components: &[]Component{}})
 	} else {
 		// find the right place to insert the release
 		for _, r := range *c.Releases {
@@ -50,7 +50,7 @@ func (c *Changelog) AddEntry(entry Entry) {
 				// add release before the current release
 				*c.Releases = append(*c.Releases, Release{
 					Tag:        entry.Tag,
-					Components: []Component{}})
+					Components: &[]Component{}})
 			}
 			break
 		}
@@ -59,7 +59,7 @@ func (c *Changelog) AddEntry(entry Entry) {
 	// find the right release and add the component
 	for i, release := range *c.Releases {
 		if release.Tag == entry.Tag {
-			(*c.Releases)[i].Components = append((*c.Releases)[i].Components, Component{
+			*(*c.Releases)[i].Components = append(*(*c.Releases)[i].Components, Component{
 				Name:        entry.Component,
 				Description: entry.Description,
 			})

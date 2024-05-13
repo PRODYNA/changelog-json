@@ -50,16 +50,16 @@ func TestChangelog_AddEntry(t *testing.T) {
 		t.Errorf("expected 3 releases, got %d", len(*changelog.Releases))
 	}
 
-	if len((*changelog.Releases)[0].Components) != 1 {
-		t.Errorf("expected 2 components, got %d", len((*changelog.Releases)[0].Components))
+	if len(*(*changelog.Releases)[0].Components) != 1 {
+		t.Errorf("expected 2 components, got %d", len(*(*changelog.Releases)[0].Components))
 	}
 
-	if len((*changelog.Releases)[1].Components) != 2 {
-		t.Errorf("expected 2 components, got %d", len((*changelog.Releases)[1].Components))
+	if len(*(*changelog.Releases)[1].Components) != 2 {
+		t.Errorf("expected 2 components, got %d", len(*(*changelog.Releases)[1].Components))
 	}
 
-	if len((*changelog.Releases)[2].Components) != 2 {
-		t.Errorf("expected 1 component, got %d", len((*changelog.Releases)[2].Components))
+	if len(*(*changelog.Releases)[2].Components) != 2 {
+		t.Errorf("expected 1 component, got %d", len(*(*changelog.Releases)[2].Components))
 	}
 
 	// expect that the first release is 1.2.0

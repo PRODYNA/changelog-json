@@ -40,7 +40,7 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 		Releases: &[]output.Release{
 			{
 				Tag:        "0.0.0",
-				Components: []output.Component{},
+				Components: &[]output.Component{},
 			},
 		},
 	}
