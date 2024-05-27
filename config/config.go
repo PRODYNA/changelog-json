@@ -20,6 +20,8 @@ const (
 	keyOrganizationEnvironment = "ORGANIZATION"
 	keyOutputFile              = "output-file"
 	keyOutputFileEnvironment   = "OUTPUT_FILE"
+	keyExpandLinks             = "expand-links"
+	keyExpandLinksEnvironment  = "EXPAND_LINKS"
 )
 
 type Config struct {
@@ -28,6 +30,7 @@ type Config struct {
 	Repositories string
 	Organization string
 	OutputFile   string
+	ExpandLinks  bool
 }
 
 func New() (*Config, error) {
@@ -37,6 +40,7 @@ func New() (*Config, error) {
 	flag.StringVar(&c.Repositories, keyRepositories, lookupEnvOrString(keyRepositoriesEnvironment, ""), "The repositories to generate changelog for.")
 	flag.StringVar(&c.Organization, keyOrganization, lookupEnvOrString(keyOrganizationEnvironment, ""), "The organization to generate changelog for.")
 	flag.StringVar(&c.OutputFile, keyOutputFile, lookupEnvOrString(keyOutputFileEnvironment, ""), "The output file to write the changelog to.")
+	flag.BoolVar(&c.ExpandLinks, keyExpandLinks, lookupEnvOrBool(keyExpandLinksEnvironment, "true"), "Expand links in the changelog.")
 	flag.Parse()
 
 	level := slog.LevelError
@@ -89,4 +93,15 @@ func lookupEnvOrInt(key string, defaultVal int) int {
 		return v
 	}
 	return defaultVal
+}
+
+func lookupEnvOrBool(key string, defaultVal string) bool {
+	if val, ok := os.LookupEnv(key); ok {
+		v, err := strconv.ParseBool(val)
+		if err != nil {
+			log.Fatalf("LookupEnvOrBool[%s]: %v", key, err)
+		}
+		return v
+	}
+	return defaultVal == "true"
 }

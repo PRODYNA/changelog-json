@@ -15,11 +15,16 @@ inputs:
     description: 'The output file to write the changelog to'
     required: true
     default: 'CHANGELOG.json'
+  expand-links:
+    description: 'Expand the links in the changelog'
+    required: false
+    default: 'true'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/prodyna/changelog-json:v0.9'
+  image: 'docker://ghcr.io/prodyna/changelog-json:v1.0'
   env:
     GITHUB_TOKEN: ${{ inputs.github-token }}
     REPOSITORIES: ${{ inputs.repositories }}
     ORGANIZATION: ${{ inputs.organization }}
     OUTPUT_FILE: ${{ inputs.output-file }}
+    EXPAND_LINKS: ${{ inputs.expand-links }}
