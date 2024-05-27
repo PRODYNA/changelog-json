@@ -6,6 +6,7 @@ import (
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"log/slog"
+	"regexp"
 	"strings"
 )
 
@@ -13,6 +14,7 @@ type Config struct {
 	GitHubToken  string
 	Repositories string
 	Organization string
+	ExpandLinks  bool
 }
 
 type Tag struct {
@@ -85,6 +87,11 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 
 		for _, release := range query.Organization.Repository.Releases.Nodes {
 			slog.Debug("Release", "tag", release.Tag.Name, "date", release.CreatedAt, "name", release.Name, "description.len", len(release.Description))
+
+			if clg.config.ExpandLinks {
+				release.Description = expandLinks(release.Description)
+			}
+
 			entry := output.Entry{
 				Tag:         release.Tag.Name,
 				Name:        release.Name,
@@ -98,4 +105,11 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 	}
 
 	return changelog, nil
+}
+
+// Replace all https://<whatever> to [https://<whatever>](https://<whatever>)
+func expandLinks(description string) string {
+	slog.Debug("Expanding links")
+	r := regexp.MustCompile(`(https://[^ \r\n]+)`)
+	return r.ReplaceAllString(description, "[$1]($1)")
 }

@@ -23,6 +23,7 @@ func main() {
 		GitHubToken:  c.GithubToken,
 		Repositories: c.Repositories,
 		Organization: c.Organization,
+		ExpandLinks:  c.ExpandLinks,
 	})
 	if err != nil {
 		slog.Error("unable to create changelog generator", "error", err)
