@@ -28,6 +28,11 @@ func TestExpandLinks(t *testing.T) {
 			description: "this is a github user @dkrizic",
 			want:        "this is a github user [**@dkrizic**](https://github.com/dkrizic)",
 		},
+		{
+			name:        "html comment",
+			description: "this is a html comment <!-- blabla --> after comment",
+			want:        "this is a html comment  after comment",
+		},
 	}
 
 	for _, tt := range tests {

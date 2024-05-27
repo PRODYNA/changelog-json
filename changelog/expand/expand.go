@@ -22,5 +22,9 @@ func ExpandLinks(description string) string {
 	r = regexp.MustCompile("@(\\w+)")
 	description = r.ReplaceAllString(description, "[**@$1**](https://github.com/$1)")
 
+	// <!-- blabla --> -> ""
+	r = regexp.MustCompile("<!--.*?-->")
+	description = r.ReplaceAllString(description, "")
+
 	return description
 }
