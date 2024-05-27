@@ -2,11 +2,11 @@ package changelog
 
 import (
 	"context"
+	"github.com/prodyna/changelog-json/changelog/expand"
 	"github.com/prodyna/changelog-json/changelog/output"
 	"github.com/shurcooL/githubv4"
 	"golang.org/x/oauth2"
 	"log/slog"
-	"regexp"
 	"strings"
 )
 
@@ -89,7 +89,7 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 			slog.Debug("Release", "tag", release.Tag.Name, "date", release.CreatedAt, "name", release.Name, "description.len", len(release.Description))
 
 			if clg.config.ExpandLinks {
-				release.Description = expandLinks(release.Description)
+				release.Description = expand.ExpandLinks(release.Description)
 			}
 
 			entry := output.Entry{
@@ -108,8 +108,3 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 }
 
 // Replace all https://<whatever> to [https://<whatever>](https://<whatever>)
-func expandLinks(description string) string {
-	slog.Debug("Expanding links")
-	r := regexp.MustCompile(`(https://[^ \r\n]+)`)
-	return r.ReplaceAllString(description, "[$1]($1)")
-}
