@@ -21,7 +21,7 @@ inputs:
     default: 'true'
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/prodyna/changelog-json:v1.2'
+  image: 'docker://ghcr.io/prodyna/changelog-json:v1.3'
   env:
     GITHUB_TOKEN: ${{ inputs.github-token }}
     REPOSITORIES: ${{ inputs.repositories }}
