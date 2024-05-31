@@ -19,7 +19,8 @@ func ExpandLinks(description string) string {
 	//	return r.ReplaceAllString(description, "[$1]($1)")
 
 	// @dkrizic -> [**@dkrizic**](https://github.com/dkrizic)
-	r = regexp.MustCompile("@(\\w+)")
+	// regex that matches github usernames including dashes
+	r = regexp.MustCompile("@([a-zA-Z0-9-]+)")
 	description = r.ReplaceAllString(description, "[**@$1**](https://github.com/$1)")
 
 	// <!-- blabla --> -> ""
