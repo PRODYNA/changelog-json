@@ -67,7 +67,7 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 							} `graphql:"associatedPullRequests(first: 99)"`
 						}
 					}
-				} `graphql:"releases(first: 10)"`
+				} `graphql:"releases(first: 20)"`
 			} `graphql:"repository(name: $repository)"`
 		} `graphql:"organization(login: $organization)"`
 	}
