@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Generate changelog
-        uses: PRODYNA/changelog-json@v1.5
+        uses: PRODYNA/changelog-json@v1.6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           organization: PRODYNA
@@ -79,7 +79,7 @@ installation:
 
 ```yaml
       - name: Generate changelog from GitHub Enterprise
-        uses: PRODYNA/changelog-json@v1.5
+        uses: PRODYNA/changelog-json@v1.6
         with:
           github-token: ${{ secrets.GHE_TOKEN }}
           organization: my-org
