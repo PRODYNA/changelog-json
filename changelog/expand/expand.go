@@ -3,25 +3,35 @@ package expand
 import (
 	"log/slog"
 	"regexp"
+	"strings"
 )
 
-func ExpandLinks(description string) string {
-	slog.Debug("Expanding links")
+const DefaultServerUrl = "https://github.com"
 
-	// https://github.com/PRODYNA-YASM/yasm-backend/pull/549 -> [**#PR549**](https://github.com/PRODYNA-YASM/yasm-backend/pull/549)
-	r := regexp.MustCompile("https://github.com/(.*?)/pull/(\\d+)")
-	description = r.ReplaceAllString(description, "[**#PR$2**](https://github.com/$1/pull/$2)")
+// ExpandLinks expands links, pull request references and user handles in the
+// description. serverUrl is the base URL of the GitHub installation, for
+// example https://github.com or https://github.example.com for GitHub Enterprise.
+func ExpandLinks(description string, serverUrl string) string {
+	slog.Debug("Expanding links", "serverUrl", serverUrl)
 
-	// https://github.com/PRODYNA-YASM/yasm-backend/compare/1.16.4...1.19.0 -> [**#1.16.4...1.19.0**](https://github.com/PRODYNA-YASM/yasm-backend/compare/1.16.4...1.19.0)
-	r = regexp.MustCompile("https://github.com/(.*?)/compare/(.*)")
-	description = r.ReplaceAllString(description, "[**#$2**](https://github.com/$1/compare/$2)")
-	// 	r := regexp.MustCompile(`(https://[^ \r\n]+)`)
-	//	return r.ReplaceAllString(description, "[$1]($1)")
+	server := strings.TrimSuffix(strings.TrimSpace(serverUrl), "/")
+	if server == "" {
+		server = DefaultServerUrl
+	}
+	quoted := regexp.QuoteMeta(server)
 
-	// @dkrizic -> [**@dkrizic**](https://github.com/dkrizic)
+	// <server>/PRODYNA-YASM/yasm-backend/pull/549 -> [**#PR549**](<server>/PRODYNA-YASM/yasm-backend/pull/549)
+	r := regexp.MustCompile(quoted + "/(.*?)/pull/(\\d+)")
+	description = r.ReplaceAllString(description, "[**#PR$2**]("+server+"/$1/pull/$2)")
+
+	// <server>/PRODYNA-YASM/yasm-backend/compare/1.16.4...1.19.0 -> [**#1.16.4...1.19.0**](<server>/PRODYNA-YASM/yasm-backend/compare/1.16.4...1.19.0)
+	r = regexp.MustCompile(quoted + "/(.*?)/compare/(.*)")
+	description = r.ReplaceAllString(description, "[**#$2**]("+server+"/$1/compare/$2)")
+
+	// @dkrizic -> [**@dkrizic**](<server>/dkrizic)
 	// regex that matches github usernames including dashes
 	r = regexp.MustCompile("@([a-zA-Z0-9-]+)")
-	description = r.ReplaceAllString(description, "[**@$1**](https://github.com/$1)")
+	description = r.ReplaceAllString(description, "[**@$1**]("+server+"/$1)")
 
 	// <!-- blabla --> -> ""
 	r = regexp.MustCompile("<!--.*?-->")

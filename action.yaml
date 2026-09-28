@@ -19,6 +19,14 @@ inputs:
     description: 'Expand the links in the changelog'
     required: false
     default: 'true'
+  github-graphql-url:
+    description: 'The GitHub GraphQL API endpoint. Defaults to the endpoint of the current GitHub instance, which allows usage on GitHub Enterprise.'
+    required: false
+    default: ${{ github.graphql_url }}
+  github-server-url:
+    description: 'The GitHub server URL used to expand links. Defaults to the URL of the current GitHub instance, which allows usage on GitHub Enterprise.'
+    required: false
+    default: ${{ github.server_url }}
 runs:
   using: 'docker'
   image: 'docker://ghcr.io/prodyna/changelog-json:v1.4'
@@ -28,3 +36,5 @@ runs:
     ORGANIZATION: ${{ inputs.organization }}
     OUTPUT_FILE: ${{ inputs.output-file }}
     EXPAND_LINKS: ${{ inputs.expand-links }}
+    GITHUB_GRAPHQL_URL: ${{ inputs.github-graphql-url }}
+    GITHUB_SERVER_URL: ${{ inputs.github-server-url }}
