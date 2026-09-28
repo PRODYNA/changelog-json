@@ -3,6 +3,7 @@ package expand
 import "testing"
 
 func TestExpandLinks(t *testing.T) {
+	const serverUrl = "https://github.com"
 	tests := []struct {
 		name        string
 		description string
@@ -42,7 +43,40 @@ func TestExpandLinks(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ExpandLinks(tt.description); got != tt.want {
+			if got := ExpandLinks(tt.description, serverUrl); got != tt.want {
+				t.Errorf("ExpandLinks() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestExpandLinksEnterprise(t *testing.T) {
+	const serverUrl = "https://github.example.com"
+	tests := []struct {
+		name        string
+		description string
+		want        string
+	}{
+		{
+			name:        "pull request",
+			description: "this is a pull request https://github.example.com/org/repo/pull/549",
+			want:        "this is a pull request [**#PR549**](https://github.example.com/org/repo/pull/549)",
+		},
+		{
+			name:        "changelog",
+			description: "this is a changelog https://github.example.com/org/repo/compare/1.16.4...1.19.0",
+			want:        "this is a changelog [**#1.16.4...1.19.0**](https://github.example.com/org/repo/compare/1.16.4...1.19.0)",
+		},
+		{
+			name:        "github user",
+			description: "this is a github user @dkrizic",
+			want:        "this is a github user [**@dkrizic**](https://github.example.com/dkrizic)",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ExpandLinks(tt.description, serverUrl); got != tt.want {
 				t.Errorf("ExpandLinks() = %v, want %v", got, tt.want)
 			}
 		})

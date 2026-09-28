@@ -1,12 +1,11 @@
 module github.com/prodyna/changelog-json
 
-go 1.22.3
-toolchain go1.24.1
+go 1.27.1
 
 require (
-	github.com/Masterminds/semver/v3 v3.3.1
-	github.com/shurcooL/githubv4 v0.0.0-20240429030203-be2daab69064
-	golang.org/x/oauth2 v0.30.0
+	github.com/Masterminds/semver/v3 v3.5.0
+	github.com/shurcooL/githubv4 v0.0.0-20260209031235-2402fdf4a9ed
+	golang.org/x/oauth2 v0.37.0
 )
 
-require github.com/shurcooL/graphql v0.0.0-20230722043721-ed46e5a46466 // indirect
+require github.com/shurcooL/graphql v0.0.0-20240915155400-7ee5256398cf // indirect

@@ -11,11 +11,15 @@ import (
 )
 
 type Config struct {
-	GitHubToken  string
-	Repositories string
-	Organization string
-	ExpandLinks  bool
+	GitHubToken      string
+	GitHubGraphQLUrl string
+	GitHubServerUrl  string
+	Repositories     string
+	Organization     string
+	ExpandLinks      bool
 }
+
+const defaultGitHubGraphQLUrl = "https://api.github.com/graphql"
 
 type Tag struct {
 	Name        string
@@ -31,7 +35,7 @@ func New(config Config) (*ChangelogGenerator, error) {
 	c := &ChangelogGenerator{
 		config: &config,
 	}
-	slog.Info("Changlog Generator", "organization", config.Organization, "repositories", config.Repositories)
+	slog.Info("Changlog Generator", "organization", config.Organization, "repositories", config.Repositories, "graphqlUrl", config.GitHubGraphQLUrl, "serverUrl", config.GitHubServerUrl)
 	return c, nil
 }
 
@@ -44,7 +48,13 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 		&oauth2.Token{AccessToken: clg.config.GitHubToken},
 	)
 	httpClient := oauth2.NewClient(ctx, src)
-	client := githubv4.NewClient(httpClient)
+	var client *githubv4.Client
+	if clg.config.GitHubGraphQLUrl == "" || clg.config.GitHubGraphQLUrl == defaultGitHubGraphQLUrl {
+		client = githubv4.NewClient(httpClient)
+	} else {
+		// GitHub Enterprise or any other GraphQL endpoint
+		client = githubv4.NewEnterpriseClient(clg.config.GitHubGraphQLUrl, httpClient)
+	}
 
 	var query struct {
 		Organization struct {
@@ -89,7 +99,7 @@ func (clg *ChangelogGenerator) Generate(ctx context.Context) (changelog *output.
 			slog.Debug("Release", "tag", release.Tag.Name, "date", release.CreatedAt, "name", release.Name, "description.len", len(release.Description))
 
 			if clg.config.ExpandLinks {
-				release.Description = expand.ExpandLinks(release.Description)
+				release.Description = expand.ExpandLinks(release.Description, clg.config.GitHubServerUrl)
 			}
 
 			entry := output.Entry{
